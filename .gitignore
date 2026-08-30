@@ -13,8 +13,6 @@ wandb/
 tmp/
 logs/
 onnx/
-mqbench/
-mqbench_export/
 
 
 assets/checkpoints/
