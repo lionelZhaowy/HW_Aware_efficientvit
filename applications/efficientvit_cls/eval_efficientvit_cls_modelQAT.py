@@ -3,7 +3,6 @@ import math
 import os
 import sys
 
-import torch
 import torch.utils.data
 from torchvision import datasets, transforms
 from torchvision.transforms.functional import InterpolationMode
@@ -15,6 +14,11 @@ sys.path.append(ROOT_DIR)
 
 from efficientvit.apps.utils import AverageMeter
 from efficientvit.cls_model_zoo import create_efficientvit_cls_model
+from efficientvit.models.utils import load_state_dict_from_file
+
+from mqbench_export.prepare_by_platform import prepare_by_platform
+from applications.quant_config import BackendMap, prepare_custom_config_dict
+
 
 
 def accuracy(output: torch.Tensor, target: torch.Tensor, topk=(1,)) -> list[torch.Tensor]:
@@ -41,8 +45,10 @@ def main():
     parser.add_argument("--image_size", type=int, default=256)
     parser.add_argument("--crop_ratio", type=float, default=0.95)
     parser.add_argument("--model", type=str, default="efficientvit-b1")
-    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1/checkpoint/model_best.pt'))
+    # parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_QAT/checkpoint/model_best.pt'))
+    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_QAT/checkpoint/checkpoint.pt'))
 
+    quant_backend = BackendMap['tensorrt'] #['tensorrt', 'nnie', 'ppl', 'snpe', 'vitis', 'tengine_u8']
     args = parser.parse_args()
     if args.gpu == "all":
         device_list = range(torch.cuda.device_count())
@@ -75,7 +81,23 @@ def main():
         drop_last=False,
     )
 
-    model = create_efficientvit_cls_model(args.model, weight_url=args.weight_url)
+    model = create_efficientvit_cls_model(args.model, pretrained=False, dropout=0.05)
+    model = prepare_by_platform(model, quant_backend, prepare_custom_config_dict)
+    weight = load_state_dict_from_file(args.weight_url)
+    model.load_state_dict(weight)
+
+    # from DNN_printer import DNN_printer
+    # from thop import profile, clever_format
+    # input_shape = (3,256,256)
+    # device  = "cuda" if torch.cuda.is_available() else "cpu"
+    # model = model.to(device)
+    # print(model)
+    # DNN_printer(model, input_shape, batch_size=1, device='cuda')
+    # input_data = torch.randn(1, input_shape[0], input_shape[1], input_shape[2]).to(device)
+    # MACs, params = profile(model, inputs=(input_data,))
+    # MACs, params = clever_format([MACs, params], '%.3f')
+    # print(f"运算量：{MACs}, 参数量：{params}")
+
     model = torch.nn.DataParallel(model).cuda()
     model.eval()
 

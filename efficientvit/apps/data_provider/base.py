@@ -36,7 +36,7 @@ def random_drop_data(dataset, drop_size: int, seed: int, keys=("samples",)):
 
 class DataProvider:
     data_keys = ("samples",)
-    mean_std = {"mean": [0.485, 0.456, 0.406], "std": [0.229, 0.224, 0.225]}
+    mean_std = {"mean": [0.5, 0.5, 0.5], "std": [0.5, 0.5, 0.5]}
     SUB_SEED = 937162211  # random seed for sampling subset
     VALID_SEED = 2147483647  # random seed for the validation set
 

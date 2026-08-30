@@ -246,7 +246,8 @@ class LinearLayer(nn.Module):
         return x
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        x = self._try_squeeze(x)
+        # x = self._try_squeeze(x)
+        x = torch.flatten(x, start_dim=1)
         if self.dropout:
             x = self.dropout(x)
         x = self.linear(x)
@@ -276,7 +277,8 @@ class DSConv(nn.Module):
         stride=1,
         use_bias=False,
         norm=("bn2d", "bn2d"),
-        act_func=("relu6", None),
+        # act_func=("relu6", None),
+        act_func=("relu", None),
     ):
         super(DSConv, self).__init__()
 
@@ -515,7 +517,7 @@ class ResBlock(nn.Module):
         return x
 
 
-class LiteMLA(nn.Module):
+class LiteMLA_orig(nn.Module):
     r"""Lightweight multi-scale linear attention"""
 
     def __init__(
@@ -532,7 +534,7 @@ class LiteMLA(nn.Module):
         scales: tuple[int, ...] = (5,),
         eps=1.0e-15,
     ):
-        super(LiteMLA, self).__init__()
+        super(LiteMLA_orig, self).__init__()
         self.eps = eps
         heads = int(in_channels // dim * heads_ratio) if heads is None else heads
 
@@ -668,6 +670,125 @@ class LiteMLA(nn.Module):
         return out
 
 
+class LiteMLA(nn.Module):
+    r"""Lightweight multi-scale linear attention (Split Q, K, V for NPU Deployment & Quantization)"""
+
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        heads: Optional[int] = None,
+        heads_ratio: float = 1.0,
+        dim=8,
+        use_bias=False,
+        norm=(None, "bn2d"),
+        act_func=(None, None),
+        kernel_func="relu",
+        scales: tuple[int, ...] = (5,),
+        eps=1.0e-15,
+    ):
+        super(LiteMLA, self).__init__()
+        self.eps = eps
+        heads = int(in_channels // dim * heads_ratio) if heads is None else heads
+
+        total_dim = heads * dim
+
+        use_bias = val2tuple(use_bias, 2)
+        norm = val2tuple(norm, 2)
+        act_func = val2tuple(act_func, 2)
+
+        self.dim = dim
+        self.heads = heads
+        
+        self.q_proj = ConvLayer(in_channels, total_dim, 1, use_bias=use_bias[0], norm=norm[0], act_func=act_func[0])
+        self.k_proj = ConvLayer(in_channels, total_dim, 1, use_bias=use_bias[0], norm=norm[0], act_func=act_func[0])
+        self.v_proj = ConvLayer(in_channels, total_dim, 1, use_bias=use_bias[0], norm=norm[0], act_func=act_func[0])
+
+        def build_aggreg():
+            return nn.ModuleList([
+                nn.Sequential(
+                    ConvLayer(total_dim, total_dim, scale, groups=total_dim, norm="bn2d", act_func=None),
+                    ConvLayer(total_dim, total_dim, scale, groups=total_dim, norm="bn2d", act_func=None),
+                    ConvLayer(total_dim, total_dim, 1, groups=1, norm="bn2d", act_func=None),
+                )
+                for scale in scales
+            ])
+            
+        self.aggreg_q = build_aggreg()
+        self.aggreg_k = build_aggreg()
+        self.aggreg_v = build_aggreg()
+
+        self.kernel_func = build_act(kernel_func, inplace=False)
+
+        self.proj = ConvLayer(
+            total_dim * (1 + len(scales)),
+            out_channels,
+            1,
+            use_bias=use_bias[1],
+            norm=norm[1],
+            act_func=act_func[1],
+        )
+
+    @torch.autocast(device_type="cuda", enabled=False)
+    def relu_linear_att(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> torch.Tensor:
+        # 修改1：移除 list(q.size())，直接通过 .shape 解包
+        B, _, H, W = q.shape
+
+        # if q.dtype == torch.float16:
+        #     q = q.float()
+        #     k = k.float()
+        #     v = v.float()
+
+        # q = torch.reshape(q, (B, -1, self.dim, H * W))
+        # k = torch.reshape(k, (B, -1, self.dim, H * W))
+        # v = torch.reshape(v, (B, -1, self.dim, H * W))
+        q = q.reshape(B, self.heads, self.dim, -1)
+        k = k.reshape(B, self.heads, self.dim, -1)
+        v = v.reshape(B, self.heads, self.dim, -1)
+
+        q = self.kernel_func(q)
+        k = self.kernel_func(k)
+
+        trans_k = k.transpose(-1, -2)
+
+        # v = F.pad(v, (0, 0, 0, 1), mode="constant", value=1)
+        vk = torch.matmul(v, trans_k)
+        out = torch.matmul(vk, q)
+        
+        # if out.dtype == torch.bfloat16:
+        #     out = out.float()
+        # out = out[:, :, :-1] / (out[:, :, -1:] + self.eps)
+
+        # out = torch.reshape(out, (B, -1, H, W))
+        out = out.reshape(B, -1, H, W)
+        return out
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        q, k, v = self.q_proj(x), self.k_proj(x), self.v_proj(x)
+        
+        multi_scale_q = [q]
+        multi_scale_k = [k]
+        multi_scale_v = [v]
+        
+        for op_q, op_k, op_v in zip(self.aggreg_q, self.aggreg_k, self.aggreg_v):
+            multi_scale_q.append(op_q(q))
+            multi_scale_k.append(op_k(k))
+            multi_scale_v.append(op_v(v))
+            
+        q = torch.cat(multi_scale_q, dim=1)
+        k = torch.cat(multi_scale_k, dim=1)
+        v = torch.cat(multi_scale_v, dim=1)
+
+        # 修改2：移除动态获取 H, W 和 if 语句。
+        # 针对静态推理，假定 H*W 总是大于 dim，强制走 linear attention。
+        # 这也是 EfficientViT 作者在实际硬件部署时推荐的路径。
+        out = self.relu_linear_att(q, k, v).to(q.dtype)
+            
+        out = self.proj(out)
+
+        return out
+    
+
 class EfficientViTBlock(nn.Module):
     def __init__(
         self,
@@ -675,7 +796,8 @@ class EfficientViTBlock(nn.Module):
         heads_ratio: float = 1.0,
         dim=32,
         expand_ratio: float = 4,
-        scales: tuple[int, ...] = (5,),
+        # scales: tuple[int, ...] = (5,),
+        scales: tuple[int, ...] = (3,),
         norm: str = "bn2d",
         act_func: str = "hswish",
         context_module: str = "LiteMLA",
@@ -761,7 +883,8 @@ class ResidualBlock(nn.Module):
         elif self.shortcut is None:
             res = self.forward_main(x)
         else:
-            res = self.forward_main(x) + self.shortcut(x)
+            # res = self.forward_main(x) + self.shortcut(x)
+            res = torch.add(self.forward_main(x), self.shortcut(x))
             if self.post_act:
                 res = self.post_act(res)
         return res

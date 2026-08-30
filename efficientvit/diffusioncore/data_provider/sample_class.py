@@ -11,7 +11,8 @@ __all__ = ["SampleClassDataProviderConfig", "SampleClassDataset", "SampleClassDa
 @dataclass
 class SampleClassDataProviderConfig(BaseDataProviderConfig):
     name: str = "sample_class"
-    num_classes: int = 1000
+    # num_classes: int = 1000
+    num_classes: int = 100
     num_samples: int = 50000
     seed: int = 0
 

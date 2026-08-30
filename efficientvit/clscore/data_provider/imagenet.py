@@ -19,7 +19,8 @@ class ImageNetDataProvider(DataProvider):
     name = "imagenet"
 
     data_dir = "/dataset/imagenet"
-    n_classes = 1000
+    # n_classes = 1000
+    n_classes = 100
     _DEFAULT_RRC_CONFIG = {
         "train_interpolate": "random",
         "test_interpolate": "bicubic",

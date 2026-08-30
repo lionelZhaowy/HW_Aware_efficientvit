@@ -1,5 +1,6 @@
 *.DS_Store*
 .vscode
+.claude
 
 __pycache__/
 
@@ -10,6 +11,11 @@ __pycache__/
 
 wandb/
 tmp/
+logs/
+onnx/
+mqbench/
+mqbench_export/
+
 
 assets/checkpoints/
 assets/data/

@@ -14,8 +14,10 @@ from efficientvit.clscore.trainer import ClsRunConfig, ClsTrainer
 from efficientvit.models.nn.drop import apply_drop_func
 
 parser = argparse.ArgumentParser()
-parser.add_argument("config", metavar="FILE", help="config file")
-parser.add_argument("--path", type=str, metavar="DIR", help="run directory")
+parser.add_argument("config", metavar="FILE", help="config file", 
+                    default="applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml")
+parser.add_argument("--path", type=str, metavar="DIR", help="run directory",
+                    default=os.path.join(ROOT_DIR, "logs/efficientvit_cls/efficientvit_b1"))
 parser.add_argument("--gpu", type=str, default=None)  # used in single machine experiments
 parser.add_argument("--manual_seed", type=int, default=0)
 parser.add_argument("--resume", action="store_true")

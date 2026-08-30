@@ -196,7 +196,8 @@ class UViTConfig:
     use_checkpoint: bool = True
 
     class_dropout_prob: float = 0.1
-    num_classes: int = 1000
+    # num_classes: int = 1000
+    num_classes: int = 100
 
     pretrained_path: Optional[str] = None
     pretrained_source: str = "dc-ae"  # uvit

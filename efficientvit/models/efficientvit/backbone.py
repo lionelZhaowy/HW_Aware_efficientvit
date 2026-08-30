@@ -39,7 +39,8 @@ class EfficientViTBackbone(nn.Module):
         dim=32,
         expand_ratio=4,
         norm="bn2d",
-        act_func="hswish",
+        # act_func="hswish",
+        act_func="relu",
     ) -> None:
         super().__init__()
 
@@ -52,14 +53,23 @@ class EfficientViTBackbone(nn.Module):
                 stride=2,
                 norm=norm,
                 act_func=act_func,
+            ), 
+            DSConv(
+                in_channels=width_list[0],
+                out_channels=width_list[0],
+                stride=1,
+                norm=(norm, norm),
+                act_func=(act_func, None)
             )
+
         ]
         for _ in range(depth_list[0]):
             block = self.build_local_block(
                 in_channels=width_list[0],
                 out_channels=width_list[0],
                 stride=1,
-                expand_ratio=1,
+                # expand_ratio=1,
+                expand_ratio=2,
                 norm=norm,
                 act_func=act_func,
             )

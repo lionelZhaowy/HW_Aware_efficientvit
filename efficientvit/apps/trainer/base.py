@@ -78,23 +78,26 @@ class Trainer:
             latest_fname = os.path.join(self.checkpoint_path, "latest.txt")
             model_path = os.path.join(self.checkpoint_path, model_name)
             with open(latest_fname, "w") as _fout:
-                _fout.write(model_path + "\n")
+                _fout.write(model_name + "\n")  # store only filename, not abs path
             torch.save(checkpoint, model_path)
 
     def load_model(self, model_fname=None) -> None:
         latest_fname = os.path.join(self.checkpoint_path, "latest.txt")
         if model_fname is None and os.path.exists(latest_fname):
             with open(latest_fname, "r") as fin:
-                model_fname = fin.readline()
-                if len(model_fname) > 0 and model_fname[-1] == "\n":
-                    model_fname = model_fname[:-1]
+                model_fname = fin.readline().strip()
         try:
             if model_fname is None:
                 model_fname = f"{self.checkpoint_path}/checkpoint.pt"
-            elif not os.path.exists(model_fname):
-                model_fname = f"{self.checkpoint_path}/{os.path.basename(model_fname)}"
+            else:
+                # Resolve relative to checkpoint_path if it's just a filename (new format)
+                if not os.path.isabs(model_fname):
+                    model_fname = os.path.join(self.checkpoint_path, model_fname)
+                # Fallback: old format with stale absolute path → try basename in current checkpoint_path
                 if not os.path.exists(model_fname):
-                    model_fname = f"{self.checkpoint_path}/checkpoint.pt"
+                    model_fname = os.path.join(self.checkpoint_path, os.path.basename(model_fname))
+                if not os.path.exists(model_fname):
+                    model_fname = os.path.join(self.checkpoint_path, "checkpoint.pt")
             print(f"=> loading checkpoint {model_fname}")
             checkpoint = load_state_dict_from_file(model_fname, False)
         except Exception:

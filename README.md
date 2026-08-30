@@ -1,3 +1,52 @@
+CUDA_VISIBLE_DEVICES=6,7 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
+applications/efficientvit_cls/train_efficientvit_cls_model.py \
+    applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
+    --data_provider.data_dir /srv/datasets/ImageNet100 \
+    --data_provider.image_size "[160,192,224,256]" \
+    --run_config.eval_image_size "[256]" \
+    --data_provider.base_batch_size 512
+
+CUDA_VISIBLE_DEVICES=6,7 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 applications/efficientvit_cls/train_efficientvit_cls_modelQAT.py     applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml     --data_provider.data_dir /srv/datasets/ImageNet100     --data_provider.image_size "[160,192,224,256]"     --run_config.eval_image_size "[256]"     --data_provider.base_batch_size 256
+
+
+CUDA_VISIBLE_DEVICES=0,1 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29503 \
+applications/efficientvit_cls/train_efficientvit_cls_modelQAT.py \
+    applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
+    --data_provider.data_dir /srv/datasets/ImageNet100 \
+    --data_provider.image_size "[160,192,224,256]" \
+    --run_config.eval_image_size "[256]" \
+    --data_provider.base_batch_size 256
+
+CUDA_VISIBLE_DEVICES=1,5 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29506 \
+applications/efficientvit_cls/train_efficientvit_cls_model.py \
+    applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
+    --data_provider.data_dir /srv/datasets/ImageNet100 \
+    --data_provider.image_size "[160,192,224,256]" \
+    --run_config.eval_image_size "[256]" \
+    --data_provider.base_batch_size 512
+
+
+CUDA_VISIBLE_DEVICES=4,5 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29504 \
+applications/efficientvit_cls/train_efficientvit_cls_model.py \
+    applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
+    --data_provider.data_dir /srv/datasets/ImageNet100 \
+    --data_provider.image_size "[160,192,224,256,288]" \
+    --run_config.eval_image_size "[256]" \
+    --run_config.n_epochs 800 \
+    --data_provider.base_batch_size 256
+
+CUDA_VISIBLE_DEVICES=0,1,2,3 torchrun --nnodes 1 --nproc_per_node=4 --master_port=29503 \
+applications/efficientvit_cls/train_efficientvit_cls_model.py \
+    applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
+    --data_provider.data_dir /data/lab_dataset/ImageNet \
+    --data_provider.image_size "[160,192,224,256,288]" \
+    --run_config.eval_image_size "[256]" \
+    --run_config.n_epochs 300 \
+    --data_provider.base_batch_size 128
+
+
+
+
 # Efficient Vision Foundation Models for High-Resolution Generation and Perception
 
 [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/deep-compression-autoencoder-for-efficient/image-generation-on-imagenet-512x512)](https://paperswithcode.com/sota/image-generation-on-imagenet-512x512?p=deep-compression-autoencoder-for-efficient)

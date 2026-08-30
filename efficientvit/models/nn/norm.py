@@ -26,6 +26,7 @@ class TritonRMSNorm2d(nn.LayerNorm):
 
 # register normalization function here
 REGISTERED_NORM_DICT: dict[str, type] = {
+    "bn1d": nn.BatchNorm1d,
     "bn2d": nn.BatchNorm2d,
     "ln": nn.LayerNorm,
     "ln2d": LayerNorm2d,
@@ -72,19 +73,29 @@ def reset_bn(
             def new_forward(bn, mean_est, var_est):
                 def lambda_forward(x):
                     x = x.contiguous()
+                    if x.dim() == 4:
+                        # 4D input (B, C, H, W): BatchNorm2d
+                        def spatial_mean(var):
+                            return var.mean(0, keepdim=True).mean(2, keepdim=True).mean(3, keepdim=True)
+                    elif x.dim() == 2:
+                        # 2D input (B, C): BatchNorm1d
+                        def spatial_mean(var):
+                            return var.mean(0, keepdim=True)
+                    else:
+                        raise ValueError(f"Unsupported input dim {x.dim()} for reset_bn")
                     if sync:
-                        batch_mean = x.mean(0, keepdim=True).mean(2, keepdim=True).mean(3, keepdim=True)  # 1, C, 1, 1
+                        batch_mean = spatial_mean(x)  # 1, C, 1, 1 or 1, C
                         batch_mean = sync_tensor(batch_mean, reduce="cat")
                         batch_mean = torch.mean(batch_mean, dim=0, keepdim=True)
 
                         batch_var = (x - batch_mean) * (x - batch_mean)
-                        batch_var = batch_var.mean(0, keepdim=True).mean(2, keepdim=True).mean(3, keepdim=True)
+                        batch_var = spatial_mean(batch_var)
                         batch_var = sync_tensor(batch_var, reduce="cat")
                         batch_var = torch.mean(batch_var, dim=0, keepdim=True)
                     else:
-                        batch_mean = x.mean(0, keepdim=True).mean(2, keepdim=True).mean(3, keepdim=True)  # 1, C, 1, 1
+                        batch_mean = spatial_mean(x)  # 1, C, 1, 1 or 1, C
                         batch_var = (x - batch_mean) * (x - batch_mean)
-                        batch_var = batch_var.mean(0, keepdim=True).mean(2, keepdim=True).mean(3, keepdim=True)
+                        batch_var = spatial_mean(batch_var)
 
                     batch_mean = torch.squeeze(batch_mean)
                     batch_var = torch.squeeze(batch_var)

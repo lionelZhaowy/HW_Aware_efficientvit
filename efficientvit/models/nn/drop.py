@@ -3,6 +3,7 @@ from typing import Any, Optional
 import numpy as np
 import torch
 import torch.nn as nn
+import torch.fx
 
 from efficientvit.apps.trainer.run_config import Scheduler
 from efficientvit.models.nn.ops import IdentityLayer, ResidualBlock
@@ -68,6 +69,8 @@ class DropPathResidualBlock(ResidualBlock):
         self.scheduled = scheduled
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if isinstance(x, torch.fx.Proxy):
+            return x
         if not self.training or self.drop_prob == 0 or not isinstance(self.shortcut, IdentityLayer):
             return ResidualBlock.forward(self, x)
         else:
