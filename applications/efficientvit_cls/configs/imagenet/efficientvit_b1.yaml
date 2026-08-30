@@ -1,6 +1,8 @@
 data_provider:
   rrc_config:
     test_crop_ratio: 0.95
+  base_batch_size: 224
+  valid_size: 224
 
 net_config:
   name: efficientvit-b1

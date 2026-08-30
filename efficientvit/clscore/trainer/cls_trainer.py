@@ -6,6 +6,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from efficientvit.apps.trainer import Trainer
@@ -31,6 +32,9 @@ class ClsTrainer(Trainer):
         )
         self.auto_restart_thresh = auto_restart_thresh
         self.test_criterion = nn.CrossEntropyLoss()
+
+        # TensorBoard: reuse the original log directory.
+        self.tb_writer = SummaryWriter(self.logs_path) if is_master() else None
 
     def _validate(self, model, data_loader, epoch) -> dict[str, Any]:
         val_loss = AverageMeter()
@@ -185,6 +189,44 @@ class ClsTrainer(Trainer):
             "train_loss": train_loss.avg,
         }
 
+    def write_tensorboard(
+        self,
+        train_info_dict: dict[str, Any],
+        val_info_dict: dict[str, Any],
+        epoch: int,
+    ) -> None:
+        if self.tb_writer is None:
+            return
+
+        step = epoch + 1
+
+        # Follow the original validation log behavior:
+        # average metrics over all validation resolutions.
+        val_info = {
+            key: list_mean([info_dict[key] for info_dict in val_info_dict.values()])
+            for key in list(val_info_dict.values())[0]
+        }
+
+        # Loss
+        self.tb_writer.add_scalar("Loss/train", train_info_dict["train_loss"], step)
+        self.tb_writer.add_scalar("Loss/val", val_info["val_loss"], step)
+
+        # Accuracy
+        if "train_top1" in train_info_dict:
+            self.tb_writer.add_scalar("Accuracy/train_top1", train_info_dict["train_top1"], step)
+
+        self.tb_writer.add_scalar("Accuracy/val_top1", val_info["val_top1"], step)
+
+        if "val_top5" in val_info:
+            self.tb_writer.add_scalar("Accuracy/val_top5", val_info["val_top5"], step)
+
+        self.tb_writer.add_scalar("Accuracy/best_val_top1", self.best_val, step)
+
+        # Learning rate
+        self.tb_writer.add_scalar("LearningRate", self.optimizer.param_groups[0]["lr"], step)
+
+        self.tb_writer.flush()
+
     def train(self, trials=0, save_freq=1) -> None:
         if self.run_config.bce:
             self.train_criterion = nn.BCEWithLogitsLoss()
@@ -192,6 +234,7 @@ class ClsTrainer(Trainer):
             self.train_criterion = nn.CrossEntropyLoss()
 
         for epoch in range(self.start_epoch, self.run_config.n_epochs + self.run_config.warmup_epochs):
+            # train
             train_info_dict = self.train_one_epoch(epoch)
             # eval
             val_info_dict = self.multires_validate(epoch=epoch)
@@ -199,6 +242,7 @@ class ClsTrainer(Trainer):
             is_best = avg_top1 > self.best_val
             self.best_val = max(avg_top1, self.best_val)
 
+            # auto restart
             if self.auto_restart_thresh is not None:
                 if self.best_val - avg_top1 > self.auto_restart_thresh:
                     self.write_log(f"Abnormal accuracy drop: {self.best_val} -> {avg_top1}")
@@ -221,6 +265,9 @@ class ClsTrainer(Trainer):
             )
             self.write_log(val_log, prefix="valid", print_log=False)
 
+            # TensorBoard log
+            self.write_tensorboard(train_info_dict, val_info_dict, epoch)
+
             # save model
             if (epoch + 1) % save_freq == 0 or (is_best and self.run_config.progress > 0.8):
                 self.save_model(
@@ -228,3 +275,6 @@ class ClsTrainer(Trainer):
                     epoch=epoch,
                     model_name="model_best.pt" if is_best else "checkpoint.pt",
                 )
+
+        if self.tb_writer is not None:
+            self.tb_writer.close()

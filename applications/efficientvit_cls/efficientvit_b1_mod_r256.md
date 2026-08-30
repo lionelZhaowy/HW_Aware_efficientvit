@@ -157,13 +157,61 @@ EfficientViTCls(
           (1-3): 3 x EfficientViTBlock(
             (context_module): ResidualBlock(
               (main): LiteMLA(
-                (qkv): ConvLayer(
-                  (conv): Conv2d(128, 384, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (q_proj): ConvLayer(
+                  (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
                 )
-                (aggreg): ModuleList(
+                (k_proj): ConvLayer(
+                  (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                )
+                (v_proj): ConvLayer(
+                  (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                )
+                (aggreg_q): ModuleList(
                   (0): Sequential(
-                    (0): Conv2d(384, 384, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=384, bias=False)
-                    (1): Conv2d(384, 384, kernel_size=(1, 1), stride=(1, 1), groups=24, bias=False)
+                    (0): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                  )
+                )
+                (aggreg_k): ModuleList(
+                  (0): Sequential(
+                    (0): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                  )
+                )
+                (aggreg_v): ModuleList(
+                  (0): Sequential(
+                    (0): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=128, bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(128, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
                   )
                 )
                 (kernel_func): ReLU()
@@ -215,13 +263,61 @@ EfficientViTCls(
           (1-4): 4 x EfficientViTBlock(
             (context_module): ResidualBlock(
               (main): LiteMLA(
-                (qkv): ConvLayer(
-                  (conv): Conv2d(256, 768, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                (q_proj): ConvLayer(
+                  (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
                 )
-                (aggreg): ModuleList(
+                (k_proj): ConvLayer(
+                  (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                )
+                (v_proj): ConvLayer(
+                  (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                )
+                (aggreg_q): ModuleList(
                   (0): Sequential(
-                    (0): Conv2d(768, 768, kernel_size=(5, 5), stride=(1, 1), padding=(2, 2), groups=768, bias=False)
-                    (1): Conv2d(768, 768, kernel_size=(1, 1), stride=(1, 1), groups=48, bias=False)
+                    (0): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                  )
+                )
+                (aggreg_k): ModuleList(
+                  (0): Sequential(
+                    (0): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                  )
+                )
+                (aggreg_v): ModuleList(
+                  (0): Sequential(
+                    (0): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (1): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=256, bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
+                    (2): ConvLayer(
+                      (conv): Conv2d(256, 256, kernel_size=(1, 1), stride=(1, 1), bias=False)
+                      (norm): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+                    )
                   )
                 )
                 (kernel_func): ReLU()
@@ -239,7 +335,7 @@ EfficientViTCls(
                   (act): ReLU()
                 )
                 (depth_conv): ConvLayer(
-                  (conv): Conv2d(1024, 1024, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1),groups=1024)
+                  (conv): Conv2d(1024, 1024, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), groups=1024)
                   (act): ReLU()
                 )
                 (point_conv): ConvLayer(
@@ -259,12 +355,13 @@ EfficientViTCls(
       (0): ConvLayer(
         (conv): Conv2d(256, 768, kernel_size=(1, 1), stride=(1, 1), bias=False)
         (norm): BatchNorm2d(768, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
-        (act): Hardswish()
+        (act): ReLU()
       )
       (1): AdaptiveAvgPool2d(output_size=1)
       (2): LinearLayer(
         (linear): Linear(in_features=768, out_features=512, bias=False)
-        (act): Hardswish()
+        (norm): BatchNorm1d(512, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (act): ReLU()
       )
       (3): LinearLayer(
         (linear): Linear(in_features=512, out_features=100, bias=True)
@@ -342,133 +439,260 @@ EfficientViTCls(
              ReLU-64      [1, 256, 16, 16]    0.25 MB             0          0.0 MB
            Conv2d-65      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
       BatchNorm2d-66      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-           Conv2d-67      [1, 384, 16, 16]   0.375 MB        49,152       0.1875 MB
-           Conv2d-68      [1, 384, 16, 16]   0.375 MB         9,600 0.03662109375 MB
-           Conv2d-69      [1, 384, 16, 16]   0.375 MB         6,144    0.0234375 MB
-             ReLU-70      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-             ReLU-71      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-           Conv2d-72      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
+           Conv2d-67      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+           Conv2d-68      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+           Conv2d-69      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+           Conv2d-70      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+      BatchNorm2d-71      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-72      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
       BatchNorm2d-73      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-    IdentityLayer-74      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-           Conv2d-75      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
-             ReLU-76      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-           Conv2d-77      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
-             ReLU-78      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-           Conv2d-79      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
-      BatchNorm2d-80      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-    IdentityLayer-81      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-           Conv2d-82      [1, 384, 16, 16]   0.375 MB        49,152       0.1875 MB
-           Conv2d-83      [1, 384, 16, 16]   0.375 MB         9,600 0.03662109375 MB
-           Conv2d-84      [1, 384, 16, 16]   0.375 MB         6,144    0.0234375 MB
-             ReLU-85      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-             ReLU-86      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-           Conv2d-87      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
-      BatchNorm2d-88      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-    IdentityLayer-89      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-           Conv2d-90      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
-             ReLU-91      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-           Conv2d-92      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
-             ReLU-93      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-           Conv2d-94      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
-      BatchNorm2d-95      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-    IdentityLayer-96      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-           Conv2d-97      [1, 384, 16, 16]   0.375 MB        49,152       0.1875 MB
-           Conv2d-98      [1, 384, 16, 16]   0.375 MB         9,600 0.03662109375 MB
-           Conv2d-99      [1, 384, 16, 16]   0.375 MB         6,144    0.0234375 MB
-            ReLU-100      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-            ReLU-101      [1, 16, 16, 256]    0.25 MB             0          0.0 MB
-          Conv2d-102      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
-     BatchNorm2d-103      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-   IdentityLayer-104      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-          Conv2d-105      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
-            ReLU-106      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-          Conv2d-107      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
-            ReLU-108      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-          Conv2d-109      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
+           Conv2d-74      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+      BatchNorm2d-75      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-76      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+      BatchNorm2d-77      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-78      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+      BatchNorm2d-79      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-80      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+      BatchNorm2d-81      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-82      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+      BatchNorm2d-83      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-84      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+      BatchNorm2d-85      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+           Conv2d-86      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+      BatchNorm2d-87      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+             ReLU-88       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+             ReLU-89       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+           Conv2d-90      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
+      BatchNorm2d-91      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+    IdentityLayer-92      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+           Conv2d-93      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
+             ReLU-94      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+           Conv2d-95      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
+             ReLU-96      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+           Conv2d-97      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
+      BatchNorm2d-98      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+    IdentityLayer-99      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+          Conv2d-100      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-101      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-102      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-103      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-104      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-105      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-106      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-107      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-108      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-109      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
      BatchNorm2d-110      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
-   IdentityLayer-111      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
-          Conv2d-112      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
-            ReLU-113      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
-          Conv2d-114        [1, 512, 8, 8]   0.125 MB         5,120   0.01953125 MB
-            ReLU-115        [1, 512, 8, 8]   0.125 MB             0          0.0 MB
-          Conv2d-116        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-117        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-118        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-          Conv2d-119        [1, 768, 8, 8]  0.1875 MB        19,200 0.0732421875 MB
-          Conv2d-120        [1, 768, 8, 8]  0.1875 MB        12,288     0.046875 MB
-            ReLU-121       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-            ReLU-122       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-          Conv2d-123        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-124        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-125        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-126       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-127       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-128       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-129       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-130        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
-     BatchNorm2d-131        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-132        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-133        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-          Conv2d-134        [1, 768, 8, 8]  0.1875 MB        19,200 0.0732421875 MB
-          Conv2d-135        [1, 768, 8, 8]  0.1875 MB        12,288     0.046875 MB
-            ReLU-136       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-            ReLU-137       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-          Conv2d-138        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-139        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-140        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-141       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-142       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-143       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-144       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-145        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
-     BatchNorm2d-146        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-147        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-148        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-          Conv2d-149        [1, 768, 8, 8]  0.1875 MB        19,200 0.0732421875 MB
-          Conv2d-150        [1, 768, 8, 8]  0.1875 MB        12,288     0.046875 MB
-            ReLU-151       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-            ReLU-152       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-          Conv2d-153        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-154        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-155        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-156       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-157       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-158       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-159       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-160        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
-     BatchNorm2d-161        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-162        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-163        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-          Conv2d-164        [1, 768, 8, 8]  0.1875 MB        19,200 0.0732421875 MB
-          Conv2d-165        [1, 768, 8, 8]  0.1875 MB        12,288     0.046875 MB
-            ReLU-166       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-            ReLU-167       [1, 32, 16, 64]   0.125 MB             0          0.0 MB
-          Conv2d-168        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-169        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-170        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-171       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-172       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-173       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-174       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-175        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
+          Conv2d-111      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-112      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-113      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-114      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-115      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-116      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-117      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-118      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-119      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-120      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+            ReLU-121       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+            ReLU-122       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+          Conv2d-123      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
+     BatchNorm2d-124      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+   IdentityLayer-125      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+          Conv2d-126      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
+            ReLU-127      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+          Conv2d-128      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
+            ReLU-129      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+          Conv2d-130      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
+     BatchNorm2d-131      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+   IdentityLayer-132      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+          Conv2d-133      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-134      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-135      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+          Conv2d-136      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-137      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-138      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-139      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-140      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-141      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-142      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-143      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-144      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-145      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-146      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-147      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-148      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-149      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-150      [1, 128, 16, 16]   0.125 MB         1,152 0.00439453125 MB
+     BatchNorm2d-151      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+          Conv2d-152      [1, 128, 16, 16]   0.125 MB        16,384       0.0625 MB
+     BatchNorm2d-153      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+            ReLU-154       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+            ReLU-155       [1, 8, 16, 512]    0.25 MB             0          0.0 MB
+          Conv2d-156      [1, 128, 16, 16]   0.125 MB        32,768        0.125 MB
+     BatchNorm2d-157      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+   IdentityLayer-158      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+          Conv2d-159      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
+            ReLU-160      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+          Conv2d-161      [1, 512, 16, 16]     0.5 MB         5,120   0.01953125 MB
+            ReLU-162      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+          Conv2d-163      [1, 128, 16, 16]   0.125 MB        65,536         0.25 MB
+     BatchNorm2d-164      [1, 128, 16, 16]   0.125 MB           256 0.0009765625 MB
+   IdentityLayer-165      [1, 128, 16, 16]   0.125 MB             0          0.0 MB
+          Conv2d-166      [1, 512, 16, 16]     0.5 MB        66,048  0.251953125 MB
+            ReLU-167      [1, 512, 16, 16]     0.5 MB             0          0.0 MB
+          Conv2d-168        [1, 512, 8, 8]   0.125 MB         5,120   0.01953125 MB
+            ReLU-169        [1, 512, 8, 8]   0.125 MB             0          0.0 MB
+          Conv2d-170        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
+     BatchNorm2d-171        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-172        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-173        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-174        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-175        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
      BatchNorm2d-176        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-177        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-178        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-     BatchNorm2d-179        [1, 768, 8, 8]  0.1875 MB         1,536  0.005859375 MB
-       Hardswish-180        [1, 768, 8, 8]  0.1875 MB             0          0.0 MB
-AdaptiveAvgPool2d-181        [1, 768, 1, 1] 0.0029296875 MB             0          0.0 MB
-          Linear-182              [1, 512] 0.001953125 MB       393,216          1.5 MB
-       Hardswish-183              [1, 512] 0.001953125 MB             0          0.0 MB
-          Linear-184              [1, 100] 0.0003814697265625 MB        51,300 0.1956939697265625 MB
+          Conv2d-177        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-178        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-179        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-180        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-181        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-182        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-183        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-184        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-185        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-186        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-187        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-188        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-189        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-190        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-191        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-192        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+            ReLU-193      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+            ReLU-194      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+          Conv2d-195        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
+     BatchNorm2d-196        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-197        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-198       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
+            ReLU-199       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-200       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
+            ReLU-201       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-202        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
+     BatchNorm2d-203        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-204        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-205        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-206        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-207        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-208        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-209        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-210        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-211        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-212        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-213        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-214        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-215        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-216        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-217        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-218        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-219        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-220        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-221        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-222        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-223        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-224        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-225        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+            ReLU-226      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+            ReLU-227      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+          Conv2d-228        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
+     BatchNorm2d-229        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-230        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-231       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
+            ReLU-232       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-233       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
+            ReLU-234       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-235        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
+     BatchNorm2d-236        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-237        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-238        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-239        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-240        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-241        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-242        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-243        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-244        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-245        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-246        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-247        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-248        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-249        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-250        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-251        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-252        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-253        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-254        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-255        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-256        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-257        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-258        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+            ReLU-259      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+            ReLU-260      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+          Conv2d-261        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
+     BatchNorm2d-262        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-263        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-264       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
+            ReLU-265       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-266       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
+            ReLU-267       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-268        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
+     BatchNorm2d-269        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-270        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-271        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-272        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-273        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+          Conv2d-274        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-275        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-276        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-277        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-278        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-279        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-280        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-281        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-282        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-283        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-284        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-285        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-286        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-287        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-288        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
+     BatchNorm2d-289        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+          Conv2d-290        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
+     BatchNorm2d-291        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+            ReLU-292      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+            ReLU-293      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
+          Conv2d-294        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
+     BatchNorm2d-295        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-296        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-297       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
+            ReLU-298       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-299       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
+            ReLU-300       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
+          Conv2d-301        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
+     BatchNorm2d-302        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
+   IdentityLayer-303        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
+          Conv2d-304        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
+     BatchNorm2d-305        [1, 768, 8, 8]  0.1875 MB         1,536  0.005859375 MB
+            ReLU-306        [1, 768, 8, 8]  0.1875 MB             0          0.0 MB
+AdaptiveAvgPool2d-307        [1, 768, 1, 1] 0.0029296875 MB             0          0.0 MB
+          Linear-308              [1, 512] 0.001953125 MB       393,216          1.5 MB
+     BatchNorm1d-309              [1, 512] 0.001953125 MB         1,024   0.00390625 MB
+            ReLU-310              [1, 512] 0.001953125 MB             0          0.0 MB
+          Linear-311              [1, 100] 0.0003814697265625 MB        51,300 0.1956939697265625 MB
 ================================================================
-Total params: 5,288,068
-Trainable params: 5,288,068
+Total params: 6,151,172
+Trainable params: 6,151,172
 Non-trainable params: 0
 ----------------------------------------------------------------
 Input size (MB): 0.75
-Forward/backward pass size (MB): 201.14
-Params size (MB): 20.17
-Estimated Total Size (MB): 222.06
+Forward/backward pass size (MB): 216.14
+Params size (MB): 23.46
+Estimated Total Size (MB): 240.36
 ----------------------------------------------------------------
 [INFO] Register count_convNd() for <class 'torch.nn.modules.conv.Conv2d'>.
 [INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm2d'>.
@@ -476,7 +700,8 @@ Estimated Total Size (MB): 222.06
 [INFO] Register zero_ops() for <class 'torch.nn.modules.container.Sequential'>.
 [INFO] Register count_adap_avgpool() for <class 'torch.nn.modules.pooling.AdaptiveAvgPool2d'>.
 [INFO] Register count_linear() for <class 'torch.nn.modules.linear.Linear'>.
-运算量：699.305M, 参数量：5.288M
+[INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm1d'>.
+运算量：781.980M, 参数量：6.151M
 
 
 

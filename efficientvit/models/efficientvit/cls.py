@@ -32,7 +32,8 @@ class ClsHead(OpSequential):
         n_classes=100,
         dropout=0.0,
         norm="bn2d",
-        act_func="hswish",
+        # act_func="hswish",
+        act_func="relu",
         fid="stage_final",
     ):
         ops = [
@@ -88,6 +89,7 @@ def efficientvit_cls_b1(**kwargs) -> EfficientViTCls:
         in_channels=256,
         # width_list=[1536, 1600],
         width_list=[768, 512],
+        act_func="relu",
         **build_kwargs_from_config(kwargs, ClsHead),
     )
     model = EfficientViTCls(backbone, head)

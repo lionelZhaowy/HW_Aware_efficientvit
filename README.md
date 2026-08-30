@@ -1,10 +1,14 @@
-CUDA_VISIBLE_DEVICES=6,7 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
+CUDA_VISIBLE_DEVICES=5,6 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
+applications/efficientvit_cls/train_efficientvit_cls_model.py applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml
+
+
+CUDA_VISIBLE_DEVICES=5,6 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
 applications/efficientvit_cls/train_efficientvit_cls_model.py \
     applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml \
     --data_provider.data_dir /srv/datasets/ImageNet100 \
     --data_provider.image_size "[160,192,224,256]" \
     --run_config.eval_image_size "[256]" \
-    --data_provider.base_batch_size 512
+    --data_provider.base_batch_size 256
 
 CUDA_VISIBLE_DEVICES=6,7 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 applications/efficientvit_cls/train_efficientvit_cls_modelQAT.py     applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml     --data_provider.data_dir /srv/datasets/ImageNet100     --data_provider.image_size "[160,192,224,256]"     --run_config.eval_image_size "[256]"     --data_provider.base_batch_size 256
 
