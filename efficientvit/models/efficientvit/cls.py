@@ -175,8 +175,8 @@ if __name__ == "__main__":
     from thop import profile, clever_format
     input_shape = (3,256,256)
     input_data = torch.randn(1, input_shape[0], input_shape[1], input_shape[2]).cuda()
-    # model = efficientvit_cls_b0().cuda().eval()
-    model = efficientvit_cls_b1().cuda().eval()
+    model = efficientvit_cls_b0().cuda().eval()
+    # model = efficientvit_cls_b1().cuda().eval()
 
     # summary(model, input_shape)
     print(model)
