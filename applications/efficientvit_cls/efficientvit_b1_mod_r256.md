@@ -10,6 +10,7 @@
   - 动态维度计算移除
 - 数据集Normalize参数改为mean和std都是0.5
 - 添加MQBench量化代码
+- b1的骨干网络block数量调整
 
 
 EfficientViTCls(
@@ -260,7 +261,7 @@ EfficientViTCls(
               )
             )
           )
-          (1-4): 4 x EfficientViTBlock(
+          (1-2): 2 x EfficientViTBlock(
             (context_module): ResidualBlock(
               (main): LiteMLA(
                 (q_proj): ConvLayer(
@@ -610,89 +611,23 @@ EfficientViTCls(
           Conv2d-235        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
      BatchNorm2d-236        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
    IdentityLayer-237        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-238        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-239        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-240        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-241        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-242        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-243        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-244        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-245        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-246        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-247        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-248        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-249        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-250        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-251        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-252        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-253        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-254        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-255        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-256        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-257        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-258        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-            ReLU-259      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
-            ReLU-260      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
-          Conv2d-261        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-262        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-263        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-264       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-265       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-266       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-267       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-268        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
-     BatchNorm2d-269        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-270        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-271        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-272        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-273        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-          Conv2d-274        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-275        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-276        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-277        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-278        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-279        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-280        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-281        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-282        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-283        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-284        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-285        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-286        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-287        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-288        [1, 256, 8, 8]  0.0625 MB         2,304 0.0087890625 MB
-     BatchNorm2d-289        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-          Conv2d-290        [1, 256, 8, 8]  0.0625 MB        65,536         0.25 MB
-     BatchNorm2d-291        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-            ReLU-292      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
-            ReLU-293      [1, 16, 16, 128]   0.125 MB             0          0.0 MB
-          Conv2d-294        [1, 256, 8, 8]  0.0625 MB       131,072          0.5 MB
-     BatchNorm2d-295        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-296        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-297       [1, 1024, 8, 8]    0.25 MB       263,168   1.00390625 MB
-            ReLU-298       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-299       [1, 1024, 8, 8]    0.25 MB        10,240    0.0390625 MB
-            ReLU-300       [1, 1024, 8, 8]    0.25 MB             0          0.0 MB
-          Conv2d-301        [1, 256, 8, 8]  0.0625 MB       262,144          1.0 MB
-     BatchNorm2d-302        [1, 256, 8, 8]  0.0625 MB           512  0.001953125 MB
-   IdentityLayer-303        [1, 256, 8, 8]  0.0625 MB             0          0.0 MB
-          Conv2d-304        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
-     BatchNorm2d-305        [1, 768, 8, 8]  0.1875 MB         1,536  0.005859375 MB
-            ReLU-306        [1, 768, 8, 8]  0.1875 MB             0          0.0 MB
-AdaptiveAvgPool2d-307        [1, 768, 1, 1] 0.0029296875 MB             0          0.0 MB
-          Linear-308              [1, 512] 0.001953125 MB       393,216          1.5 MB
-     BatchNorm1d-309              [1, 512] 0.001953125 MB         1,024   0.00390625 MB
-            ReLU-310              [1, 512] 0.001953125 MB             0          0.0 MB
-          Linear-311              [1, 100] 0.0003814697265625 MB        51,300 0.1956939697265625 MB
+          Conv2d-238        [1, 768, 8, 8]  0.1875 MB       196,608         0.75 MB
+     BatchNorm2d-239        [1, 768, 8, 8]  0.1875 MB         1,536  0.005859375 MB
+            ReLU-240        [1, 768, 8, 8]  0.1875 MB             0          0.0 MB
+AdaptiveAvgPool2d-241        [1, 768, 1, 1] 0.0029296875 MB             0          0.0 MB
+          Linear-242              [1, 512] 0.001953125 MB       393,216          1.5 MB
+     BatchNorm1d-243              [1, 512] 0.001953125 MB         1,024   0.00390625 MB
+            ReLU-244              [1, 512] 0.001953125 MB             0          0.0 MB
+          Linear-245              [1, 100] 0.0003814697265625 MB        51,300 0.1956939697265625 MB
 ================================================================
-Total params: 6,151,172
-Trainable params: 6,151,172
+Total params: 3,992,580
+Trainable params: 3,992,580
 Non-trainable params: 0
 ----------------------------------------------------------------
 Input size (MB): 0.75
-Forward/backward pass size (MB): 216.14
-Params size (MB): 23.46
-Estimated Total Size (MB): 240.36
+Forward/backward pass size (MB): 204.39
+Params size (MB): 15.23
+Estimated Total Size (MB): 220.37
 ----------------------------------------------------------------
 [INFO] Register count_convNd() for <class 'torch.nn.modules.conv.Conv2d'>.
 [INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm2d'>.
@@ -701,7 +636,6 @@ Estimated Total Size (MB): 240.36
 [INFO] Register count_adap_avgpool() for <class 'torch.nn.modules.pooling.AdaptiveAvgPool2d'>.
 [INFO] Register count_linear() for <class 'torch.nn.modules.linear.Linear'>.
 [INFO] Register count_normalization() for <class 'torch.nn.modules.batchnorm.BatchNorm1d'>.
-运算量：781.980M, 参数量：6.151M
-
+运算量：643.372M, 参数量：3.993M
 
 
