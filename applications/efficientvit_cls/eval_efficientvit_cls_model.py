@@ -15,6 +15,7 @@ sys.path.append(ROOT_DIR)
 
 from efficientvit.apps.utils import AverageMeter
 from efficientvit.cls_model_zoo import create_efficientvit_cls_model
+from efficientvit.models.utils import load_state_dict_from_file
 
 
 def accuracy(output: torch.Tensor, target: torch.Tensor, topk=(1,)) -> list[torch.Tensor]:
@@ -35,13 +36,14 @@ def accuracy(output: torch.Tensor, target: torch.Tensor, topk=(1,)) -> list[torc
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--path", type=str, default="/srv/datasets/ImageNet100/val")
-    parser.add_argument("--gpu", type=str, default="5")
+    parser.add_argument("--gpu", type=str, default="7")
     parser.add_argument("--batch_size", help="batch size per gpu", type=int, default=256)
     parser.add_argument("-j", "--workers", help="number of workers", type=int, default=16)
     parser.add_argument("--image_size", type=int, default=256)
     parser.add_argument("--crop_ratio", type=float, default=0.95)
     parser.add_argument("--model", type=str, default="efficientvit-b1")
-    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1/checkpoint/model_best.pt'))
+    # parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1/checkpoint/model_best.pt'))
+    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1/checkpoint/checkpoint.pt'))
 
     args = parser.parse_args()
     if args.gpu == "all":
@@ -75,7 +77,15 @@ def main():
         drop_last=False,
     )
 
-    model = create_efficientvit_cls_model(args.model, weight_url=args.weight_url)
+    checkpoint = load_state_dict_from_file(args.weight_url, only_state_dict=False)
+    if "ema" in checkpoint and checkpoint["ema"] is not None:
+        state_dict = next(iter(checkpoint["ema"].values()))
+    elif "state_dict" in checkpoint:
+        state_dict = checkpoint["state_dict"]
+    else:
+        state_dict = checkpoint
+    model = create_efficientvit_cls_model(args.model, pretrained=False)
+    model.load_state_dict(state_dict)
     model = torch.nn.DataParallel(model).cuda()
     model.eval()
 

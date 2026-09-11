@@ -41,7 +41,7 @@ def main():
     parser.add_argument("-j", "--workers", help="number of workers", type=int, default=16)
     parser.add_argument("--image_size", type=int, default=256)
     parser.add_argument("--crop_ratio", type=float, default=0.95)
-    parser.add_argument("--onnx_path", type=str, default=os.path.join(ROOT_DIR, "onnx/EfficientViT_b0.onnx"))
+    parser.add_argument("--onnx_path", type=str, default=os.path.join(ROOT_DIR, "onnx/EfficientViT_b1.onnx"))
     parser.add_argument("--gpu", type=str, default="5")
 
     args = parser.parse_args()

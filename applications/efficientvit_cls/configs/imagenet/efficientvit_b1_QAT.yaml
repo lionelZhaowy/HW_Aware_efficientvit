@@ -1,0 +1,38 @@
+data_provider:
+  rrc_config:
+    test_crop_ratio: 0.95
+  data_aug:
+    name: randaug
+    n: 1
+    m: 3
+  base_batch_size: 128
+  valid_size: null
+  image_size: 256
+
+run_config:
+  n_epochs: 100
+  base_lr: 0.00005
+  warmup_epochs: 5
+  weight_decay: 0.1
+  no_wd_keys:
+  - norm
+  - bias
+  - scale
+  - zero_point
+  reset_bn: false
+  eval_image_size:
+  - 256
+  mixup_config: null
+  bce: true
+
+backbone_drop:
+  name: droppath
+  drop_prob: 0.0
+  linear_decay: true
+
+ema_decay: null
+
+
+net_config:
+  name: efficientvit-b1
+  dropout: 0.05

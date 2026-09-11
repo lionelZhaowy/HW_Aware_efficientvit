@@ -46,7 +46,7 @@ def main():
     parser.add_argument("--crop_ratio", type=float, default=0.95)
     parser.add_argument("--model", type=str, default="efficientvit-b1")
     # parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_QAT/checkpoint/model_best.pt'))
-    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_QAT/checkpoint/checkpoint.pt'))
+    parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_QAT/checkpoint/model_best.pt'))
 
     quant_backend = BackendMap['tensorrt'] #['tensorrt', 'nnie', 'ppl', 'snpe', 'vitis', 'tengine_u8']
     args = parser.parse_args()

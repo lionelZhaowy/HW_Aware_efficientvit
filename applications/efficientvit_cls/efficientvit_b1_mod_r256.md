@@ -639,3 +639,26 @@ Estimated Total Size (MB): 220.37
 运算量：643.372M, 参数量：3.993M
 
 
+- best: 
+Eval efficientvit-b1 on ImageNet: 100%|████████████████████████████████████████████| 20/20 [00:12<00:00,  1.57it/s, top1=85.9, top5=97.1, resolution=256]
+Top1 Acc=85.880, Top5 Acc=97.080
+- checkpoint:
+Eval efficientvit-b1 on ImageNet: 100%|████████████████████████████████████████████| 20/20 [00:10<00:00,  1.89it/s, top1=85.9, top5=97.1, resolution=256]
+Top1 Acc=85.880, Top5 Acc=97.100
+
+
+QAT:
+[mqbench_export] INFO: Insert act quant head_op_list_3_linear_post_act_fake_quantizer
+Eval efficientvit-b1 on ImageNet: 100%|██████████████████████████████████████| 20/20 [00:11<00:00,  1.81it/s, top1=85.1, top5=96.6, resolution=256]
+Top1 Acc=85.120, Top5 Acc=96.580
+
+
+ONNX：
+Using GPU: 5, Providers: ['CPUExecutionProvider']
+Eval ONNX model on ImageNet: 100%|███████████████████████████████████████████| 20/20 [05:48<00:00, 17.40s/it, top1=84.9, top5=96.6, resolution=256]
+Top1 Acc=84.940, Top5 Acc=96.580
+
+Using GPU: 5, Providers: ['CUDAExecutionProvider', 'CPUExecutionProvider']
+Eval ONNX model on ImageNet: 100%|███████████████████████████████████████████| 20/20 [00:35<00:00,  1.78s/it, top1=84.8, top5=96.6, resolution=256]
+Top1 Acc=84.800, Top5 Acc=96.600
+

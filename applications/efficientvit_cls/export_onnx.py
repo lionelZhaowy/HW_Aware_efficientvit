@@ -21,8 +21,8 @@ if __name__ == '__main__':
     quant_backend = BackendMap['tensorrt']
     model = create_efficientvit_cls_model(model_name, pretrained=False, dropout=0.05)
     model = prepare_by_platform(model, quant_backend, prepare_custom_config_dict)
-    # weight = load_state_dict_from_file(deploy_weight_path)
-    # model.load_state_dict(weight)
+    weight = load_state_dict_from_file(deploy_weight_path)
+    model.load_state_dict(weight)
     model.cpu()
     model.eval()
     if os.path.exists(onnx_dir) is False:

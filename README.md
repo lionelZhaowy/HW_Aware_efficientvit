@@ -1,3 +1,6 @@
+CUDA_VISIBLE_DEVICES=4,5 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
+applications/efficientvit_cls/train_efficientvit_cls_modelQAT.py applications/efficientvit_cls/configs/imagenet/efficientvit_b1_QAT.yaml
+
 CUDA_VISIBLE_DEVICES=5,6 torchrun --nnodes 1 --nproc_per_node=2 --master_port=29501 \
 applications/efficientvit_cls/train_efficientvit_cls_model.py applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml
 

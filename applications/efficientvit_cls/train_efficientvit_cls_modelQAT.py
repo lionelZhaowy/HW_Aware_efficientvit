@@ -21,9 +21,9 @@ from applications.quant_config import BackendMap, prepare_custom_config_dict
 
 parser = argparse.ArgumentParser()
 parser.add_argument("config", metavar="FILE", help="config file", 
-                    default="applications/efficientvit_cls/configs/imagenet/efficientvit_b1.yaml")
+                    default="applications/efficientvit_cls/configs/imagenet/efficientvit_b1_QAT.yaml")
 parser.add_argument("--path", type=str, metavar="DIR", help="run directory",
-                    default=os.path.join(ROOT_DIR, "logs/efficientvit_cls/efficientvit_b1"))
+                    default=os.path.join(ROOT_DIR, "logs/efficientvit_cls/efficientvit_b1_QAT"))
 parser.add_argument("--gpu", type=str, default=None)  # used in single machine experiments
 parser.add_argument("--manual_seed", type=int, default=0)
 parser.add_argument("--resume", action="store_true")
@@ -32,12 +32,11 @@ parser.add_argument("--amp", type=str, choices=["fp32", "fp16", "bf16"], default
 # initialization
 parser.add_argument("--rand_init", type=str, default="trunc_normal@0.02")
 parser.add_argument("--last_gamma", type=float, default=0)
-# parser.add_argument("--pretrainedQAT", type=str, default='logs/efficientvit_cls/efficientvit_b1_r256_QAT/checkpoint/model_best.pt')
 parser.add_argument("--pretrainedQAT", type=str, default='')
 
 parser.add_argument("--auto_restart_thresh", type=float, default=8.0)
 parser.add_argument("--save_freq", type=int, default=1)
-parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1_r256/checkpoint/checkpoint.pt'))
+parser.add_argument("--weight_url", type=str, default=os.path.join(ROOT_DIR, 'logs/efficientvit_cls/efficientvit_b1/checkpoint/model_best.pt'))
 
 
 def calibrate_with_train_data(data_provider, model, cali_images=16000, cali_batch_size=128):
@@ -80,46 +79,30 @@ def calibrate_with_train_data(data_provider, model, cali_images=16000, cali_batc
     print(f"End multi-resolution calibration (total ~{total_images} images across {len(training_resolutions)} resolutions).")
     return
 
+
 def fix_input_fakequantize_scale(model, input_scale=1.0 / 128.0):
-    """
-    Fix the input FakeQuantize scale to match the deployment DequantizeLinear scale.
-
-    With the new normalization (mean=128/255, std=128/255), the input is already in
-    deployment range: X_norm = (UINT8 - 128) / 128. The FakeQuantize with scale=1/128
-    is a perfect no-op: q = round(UINT8-128) = UINT8-128 (exact integer).
-
-    Must be called AFTER enable_quantization (not during calibration), because
-    calibration's observer branch does scale.data.copy_() which would overwrite.
-    """
-    graph = model.graph
-
-    # 1. Find the input placeholder node
-    input_node = None
-    for node in graph.nodes:
-        if node.op == "placeholder":
-            input_node = node
-            break
+    """Match the NPU UINT8-to-INT8 (value - 128) input conversion."""
+    input_node = next((node for node in model.graph.nodes if node.op == "placeholder"), None)
     if input_node is None:
-        print("Warning: No placeholder node found. Skipping input scale fix.")
-        return
+        raise RuntimeError("Cannot find the model input node.")
 
-    # 2. Find the FakeQuantize node that directly consumes the placeholder
-    fq_node = None
-    for node in graph.nodes:
-        if node.op == "call_module" and "post_act_fake_quantizer" in str(node.target):
-            if len(node.args) > 0 and node.args[0] == input_node:
-                fq_node = node
-                break
+    fq_node = next(
+        (
+            node
+            for node in model.graph.nodes
+            if node.op == "call_module"
+            and "post_act_fake_quantizer" in str(node.target)
+            and node.args
+            and node.args[0] == input_node
+        ),
+        None,
+    )
     if fq_node is None:
-        print("Warning: No input FakeQuantize found. Skipping input scale fix.")
-        return
+        raise RuntimeError("Cannot find the input FakeQuantize module.")
 
-    # 3. Access the FakeQuantize module and fix its scale
     fq_module = model.get_submodule(fq_node.target)
     fq_module.scale.data.fill_(input_scale)
     fq_module.scale.requires_grad = False
-    print(f"Fixed input FakeQuantize '{fq_node.target}' scale to {input_scale} "
-          f"(deployment DequantizeLinear scale), requires_grad=False")
 
 
 def main():
@@ -179,7 +162,9 @@ def main():
         print("警告: checkpoint 中无 EMA，加载原始权重")
 
     model = prepare_by_platform(model, quant_backend, prepare_custom_config_dict)
-    if args.pretrainedQAT and os.path.isfile(args.pretrainedQAT):
+    if args.pretrainedQAT:
+        if not os.path.isfile(args.pretrainedQAT):
+            raise FileNotFoundError(args.pretrainedQAT)
         weight = load_state_dict_from_file(args.pretrainedQAT)
         model.load_state_dict(weight)
 
@@ -207,29 +192,12 @@ def main():
     else:
         trainer.sync_model()
 
-    # calibrate — use training subset covering all resolutions for proper
-    # EMAMinMaxObserver convergence (was: only 256 valid images at single res).
-    enable_calibration(trainer.network)
-    trainer.data_provider.set_epoch(0)  # init RRSController before calibration
-    calibrate_with_train_data(trainer.data_provider, trainer.network, cali_images=4000, cali_batch_size=128)
-
-    enable_quantization(trainer.network)
-    # Fix input FakeQuantize scale to 1/128 = deployment DequantizeLinear scale.
-    # With new normalization (mean=128/255, std=128/255), input is already in
-    # deployment range, so the FakeQuantize is a perfect no-op.
-    fix_input_fakequantize_scale(trainer.network)
-
-    # EMA shadow was created in prep_for_training BEFORE calibration, so its
-    # observers have inf/-inf min/max and its scale/zp are wrong.  Simple
-    # enable_quantization on the shadow would just freeze those wrong values.
-    # With ema_decay=0.9998 EMA would need ~3000 steps just to converge.
-    # Instead, replace the shadow with a deepcopy of the calibrated model.
-    if trainer.ema is not None:
-        import copy
-        trainer.ema.shadows = copy.deepcopy(trainer.network)
-        fix_input_fakequantize_scale(trainer.ema.shadows)
-    if trainer.ema is not None:
-        fix_input_fakequantize_scale(trainer.ema.shadows)
+    if not args.resume and not args.pretrainedQAT:
+        enable_calibration(trainer.network)
+        trainer.data_provider.set_epoch(0)
+        calibrate_with_train_data(trainer.data_provider, trainer.network, cali_images=4000, cali_batch_size=128)
+        enable_quantization(trainer.network)
+        fix_input_fakequantize_scale(trainer.network)
 
     # ================================================================
     # 校准后验证 (Pre-QAT calibration validation)
@@ -246,6 +214,10 @@ def main():
                 print(f", Top5={info['val_top5']:.2f}%", end="")
             print(f", Loss={info['val_loss']:.4f}")
         print("=" * 60)
+
+    if not args.resume and not args.pretrainedQAT:
+        trainer.best_val = sum(info["val_top1"] for info in calib_val_info.values()) / len(calib_val_info)
+        trainer.save_model(only_state_dict=False, epoch=-1, model_name="model_best.pt")
 
     # launch training
     trainer.train(save_freq=args.save_freq)
